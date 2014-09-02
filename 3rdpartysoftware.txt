@@ -1,0 +1,4 @@
+Thsi project uses:
+
+- libb64 project
+- WaterJuice/CryptLib (github)
