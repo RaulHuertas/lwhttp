@@ -10,6 +10,11 @@
 
 #include "lwHTTP.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define HTTP_V_1_1	"HTTP/1.1"
 #define HTTP_WSKeyAttrName	"Sec-WebSocket-Key:"
 #define HTTP_WSVersionAttrName	"Sec-WebSocket-Version:"
@@ -55,7 +60,9 @@ extern const char* lwHTTP_Template_WSProtocolResponseAttrName;
 
 
 
-
+#ifdef __cplusplus
+}
+#endif
 
 
 

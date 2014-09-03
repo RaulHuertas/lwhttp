@@ -10,6 +10,10 @@
 
 #include "lwHTTPConfig.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define LW_CONN_STATE_CLOSED 			0
 #define LW_CONN_STATE_WAITING_DATA 		1
 #define LW_CONN_STATE_TRANSMIT_DATA 	2
@@ -25,11 +29,13 @@ struct lwHTTPBaseConnection_RcvArgs{
 	struct tcp_pcb *tpcb;
 	struct pbuf *p;
 	err_t err;
-#endif //
+	#endif //
 };
 
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 #endif /* LWCONN_H_ */

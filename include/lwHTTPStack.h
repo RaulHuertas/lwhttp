@@ -8,6 +8,11 @@
 #ifndef LWHTTPSTACK_H_
 #define LWHTTPSTACK_H_
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define LWHTTPLIB_PORT												80
 #define LWHTTPLIB_MAX_ATTRB_NAME_MAX_LEN 							512
 #define LWHTTPLIB_MAX_ATTRB_VALUE_MAX_LEN 							512
@@ -63,5 +68,9 @@ struct lwHTTPQueryParsingUtils{
 };
 
 void lwHTTPQueryParsingUtils_Start(struct lwHTTPQueryParsingUtils* utils);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWHTTPSTACK_H_ */

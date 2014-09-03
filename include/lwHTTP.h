@@ -12,6 +12,12 @@
 #include "lwHTTPBaseConn.h"
 #include "lwHTTPStack.h"
 #include "lwHTTPws.h"
+#include "lwHTTP_SiteLoader.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 struct lwHTTPClientValidator;
 struct lwHTTPAppCapabilities;
@@ -129,5 +135,9 @@ void lwHTTPConnection_WS_TransmitData(
 void lwHTTPConn_AppHandler_Init();
 
 void lwHTTPConnection_Close(struct lwHTTPConnection* conn);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWHTTP_H_ */

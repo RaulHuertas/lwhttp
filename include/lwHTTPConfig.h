@@ -9,7 +9,7 @@
 #define LWHTTPLIBCONFIG_H_
 
 #include "lwhttp_apineeds.h"
-#define LWHTTP_USE_lwIP_STACK 				1
+
 #define LWHTTP_DEBUG_VERBOSE 				1
 #define LWHTTP_INIT_DEFAULT_CALLBACKS		1
 

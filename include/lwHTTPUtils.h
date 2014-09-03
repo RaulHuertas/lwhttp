@@ -8,9 +8,10 @@
 #ifndef LWHTTPUTILS_H_
 #define LWHTTPUTILS_H_
 #include "lwHTTP.h"
-#include "xtmrctr.h"
 
-extern XTmrCtr* SystemTimerInstancePtr;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void lwHTTPDefaultGetTime(lwHTTPTime*  );
 
@@ -18,5 +19,8 @@ int lwHTTPDefaulIsClientValidQ(
 	struct lwHTTPDispatcherAcceptArguments*
 );
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWHTTPUTILS_H_ */

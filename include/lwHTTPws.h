@@ -9,6 +9,12 @@
 #define LWHTTPWS_H_
 #include "lwHTTPConfig.h"
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 struct lwHTTPConnection;
 
 typedef int (*lwWSConnStarted)(struct lwHTTPConnection* conn);
@@ -179,5 +185,10 @@ void lwHTTP_WSMaskData(
 	const lwHTTPU8* maskkey,
 	int length
 );
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* LWHTTPWS_H_ */
