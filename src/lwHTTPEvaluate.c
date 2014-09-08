@@ -28,7 +28,7 @@ void lwHTTPDispatcher_EvaluateConn(
 			if(conn->flags&lwHTTPConn_Flag_IsWS){
 				struct lwHTTPwsContext* wsCtx = &conn->webSocketContext;
 				if(wsCtx->txMsgStart!=wsCtx->txMsgEnd){
-					LWHTTPDebug("LWHTTPDebug: Enviando frame WS address %d\n",
+					LWHTTPDebug("LWHTTPDebug: Enviando frame WS address 0x%x\n",
 							(char*)&wsCtx->txMsgs[wsCtx->txMsgStart].messageData[0]
 					);
 					memcpy(
@@ -85,14 +85,17 @@ void lwHTTPDispatcher_EvaluateConn(
 //					elapsedTime
 //				);
 				if(elapsedTime>LWHTTP_MAX_CONN_TIMEOUT){
-					lwHTTPConnection_Close(conn);
-					LWHTTPDebug(
-						"LWHTTPDebug: cerrando conexion %d por timeout %d %d %d \n",
-						conn->connectionNumber,
-						conn->timeoutStartMark,
-						actualTime,
-						elapsedTime
-					);
+					if(!(conn->flags&lwHTTPConn_Flag_IsWS)){
+						lwHTTPConnection_Close(conn);
+						LWHTTPDebug(
+							"LWHTTPDebug: cerrando conexion %d por timeout %x %x %x %x \n",
+							conn->connectionNumber,
+							conn->timeoutStartMark,
+							actualTime,
+							elapsedTime,
+							LWHTTP_MAX_CONN_TIMEOUT
+						);
+					}
 				}
 			}
 
@@ -105,13 +108,14 @@ void lwHTTPDispatcher_EvaluateConn(
 			if(bytesToWriteNow>LWHTTP_MAX_WRITE_SIZE){
 				bytesToWriteNow = LWHTTP_MAX_WRITE_SIZE;
 			}
-			LWHTTPDebug("transmitiendo %d bytes \n", bytesToWriteNow);
+			LWHTTPDebug("LWHTTPDebug: transmitiendo %d bytes \n", bytesToWriteNow);
 			err_t result = tcp_write(
 				conn->tpcb,
 				&conn->txBuffer[conn->txSentBytes],
 				bytesToWriteNow,
 				TCP_WRITE_FLAG_COPY
 			);
+
 			LWHTTPDebug("LWHTTPDebug: Orden de escritura enviada\n");
 			switch(result){
 				case ERR_OK:{
@@ -126,19 +130,32 @@ void lwHTTPDispatcher_EvaluateConn(
 						if(conn->flags&lwHTTPConn_Flag_CloseAfterTransmission){
 							lwHTTPConnection_Close(conn);
 							conn->flags&=~lwHTTPConn_Flag_CloseAfterTransmission;
+							LWHTTPDebug(
+								"LWHTTPDebug: conn %d Close after transmission!\n",
+								conn->connectionNumber
+							);
 						}
 						if(conn->flags&lwHTTPConn_Flag_AfterTX_UpgradeToWS){
 							//lwHTTPConnection_Close(conn);
 							//Ir al estado de Websockets
 							conn->flags&=~lwHTTPConn_Flag_AfterTX_UpgradeToWS;
 							conn->flags|=lwHTTPConn_Flag_IsWS;
+							LWHTTPDebug(
+								"LWHTTPDebug: conn %d Upgrade to.. WebSocket!\n",
+								conn->connectionNumber
+							);
 						}
 						if(conn->flags&lwHTTPConn_ClearWSTxEntry){
 							struct lwHTTPwsContext* wsCtx = &conn->webSocketContext;
-							LWHTTPDebug("WS_TX: Deleting index %d\n", wsCtx->txMsgStart);
+							LWHTTPDebug("LWHTTPDebug: WS_TX: Deleting index %d\n", wsCtx->txMsgStart);
 							wsCtx->txMsgStart++;
 							wsCtx->txMsgStart&=LWHTTP_WSMESSAGE_MAX_QUEUE_MASK;
 						}
+					}else{
+						LWHTTPDebug(
+							"LWHTTPDebug answ req: conn %d enviados %d/%d\n",
+							conn->connectionNumber, conn->txSentBytes, conn->txSize
+						);
 					}
 					break;
 				}
@@ -178,6 +195,10 @@ void lwHTTPDispatcher_Evaluate(
 			continue;
 		}
 		lwHTTPDispatcher_EvaluateConn(conn);
+		if(conn->state!=lwHTTPConnState_CLOSED){
+			tcp_output(conn->tpcb);
+		}
+
 	}
 
 }

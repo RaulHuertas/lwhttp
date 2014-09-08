@@ -12,18 +12,18 @@ err_t lwHTTPConnection_DataReceived(
 
 	struct lwHTTPConnection* conn = (struct lwHTTPConnection*)args->arg;
 	if (!args->p) {
-		lwHTTPConnection_Close(conn);
-		LWHTTPDebug("Conexion %dfinalizada por el extremo remoto\n", conn->connectionNumber);
 		if(conn->flags&lwHTTPConn_Flag_IsWS){
 			conn->appWSHandler->endConnCB(conn);
 		}
+		lwHTTPConnection_Close(conn);
+		LWHTTPDebug("LWHTTPDebug: Conexion %d finalizada por el extremo remoto\n", conn->connectionNumber);
 		return ERR_OK;
 	}
 	//Datos recibidos
 	lwHTTPU8 rcvdChar;
 	lwHTTPU16 nBytesAceptados = 0U;
 	if(args->p->len > 0U){
-		LWHTTPDebug(" %d Datos recibidos :)\n\r", (int)args->p->len);
+		LWHTTPDebug("LWHTTPDebug: Conn %d, %d datos recibidos :)\n\r",conn->connectionNumber, (int)args->p->len);
 
 		lwHTTPU16 nextEnd = conn->rxBufEnd+1U;
 		nextEnd&=LWHTTP_CONN_RX_BUFFER_SIZE_MASK;
@@ -32,17 +32,17 @@ err_t lwHTTPConnection_DataReceived(
 			conn->rxBufEnd = nextEnd;
 			nextEnd++;nextEnd&=LWHTTP_CONN_RX_BUFFER_SIZE_MASK;
 			nBytesAceptados++;
-			LWHTTPDebug("%c", rcvdChar );
+			LWHTTPDebug("%2.2x", rcvdChar );
 			if(nBytesAceptados==args->p->len){
 				break;
 			}
 		}
 		LWHTTPDebug("new end %d, new start %d\n\n", conn->rxBufEnd, conn->rxBufStart );
 	}
-
+	LWHTTPDebug("LWHTTPDebug: Conn %d tcp_recved %d\n\r", conn->connectionNumber, nBytesAceptados);
 	tcp_recved(args->tpcb, nBytesAceptados);
 	lwHTTPDefaultGetTime(	&conn->timeoutStartMark	);
 	//Examinar los datos recibidos
-	//lwHTTPConnection_ParseRcvdData(args);
+
 	return ERR_OK;
 }

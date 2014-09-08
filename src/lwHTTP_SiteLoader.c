@@ -8,8 +8,8 @@ void lwHTTPSite_Init(struct lwhttpSite* site){
 	site->seed = 0;
 	site->exportHomeFileIndex = 0;
 	site->exportErrorFileIndex = 0;
+	site->data = 0;
 }
-
 
 
 

@@ -47,9 +47,10 @@ void lwHTTPConnection_startResponse(struct lwHTTPConnection* conn){
 		conn->parsingUtils.responseBodyLength
 	);
 	conn->txSize = conn->parsingUtils.responseHeaderLength+conn->parsingUtils.responseBodyLength;
+	conn->txSentBytes = 0;
 	conn->state = lwHTTPConnState_ANSWERING_REQUEST;
 	LWHTTPDebug("LWHTTPDebug> Header to send: %s", conn->parsingUtils.responseHeader);
-	conn->txSentBytes = 0;
+
 }
 
 

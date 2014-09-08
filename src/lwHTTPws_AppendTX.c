@@ -35,7 +35,7 @@ int lwHTTPCtx_TxData(
 
 	memcpy(&out[2], data, length);
 	ctx->txMsgs[ctx->txMsgEnd].length = length+2;
-	LWHTTPDebug("WS_TX: Appending index %d, address%d, nuevos indices %d %d\n",
+	LWHTTPDebug("WS_TX: Appending index %d, address 0x%x, nuevos indices %d %d\n",
 					ctx->txMsgEnd,
 					out,
 					ctx->txMsgStart,
@@ -44,6 +44,11 @@ int lwHTTPCtx_TxData(
 	ctx->txMsgEnd = nextEnd;
 	nextEnd = ctx->txMsgEnd+1;
 	nextEnd&=LWHTTP_WSMESSAGE_MAX_QUEUE_MASK;
+
+	LWHTTPDebug("LWHTTPDebug lwHTTPCtx_TxData: conn->state 0x%x\n",
+			conn->state
+	);
+
 	if(nextEnd==ctx->txMsgStart){
 		return 1;
 	}else{

@@ -130,6 +130,7 @@ int lwHTTPDispatcher_EvaluateAccept(
 	dispatcher->conns[connToUse].caps = &dispatcher->caps;
 	tcp_recv(	args->newpcb, lwHTTPDispatcher_ReceiveCallback			);
 	tcp_arg(	args->newpcb, (void*)&(dispatcher->conns[connToUse]) 	);
+	//tcp_nagle_disable(args->newpcb);
 	lwHTTPDefaultGetTime(	&(dispatcher->conns[connToUse].timeoutStartMark)	);
 	return ERR_OK;
 }
