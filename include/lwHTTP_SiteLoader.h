@@ -42,10 +42,11 @@ struct lwhttpSite{
 	lwHTTPU32 seed;
 	lwHTTPU32 exportHomeFileIndex;
 	lwHTTPU32 exportErrorFileIndex;
-	struct lwHTTPSiteResource resources[LWHTTP_MAX_RESOURCES];
+	//struct lwHTTPSiteResource resources[LWHTTP_MAX_RESOURCES];
+	//struct lwHTTPSiteTuple tuples[LWHTTP_MAX_TUPLES];
+	//struct lwHTTPSiteEntry entries[LWHTTP_MAX_ENTRYS];
 	struct lwHTTPSiteTuple tuples[LWHTTP_MAX_TUPLES];
-	struct lwHTTPSiteEntry entries[LWHTTP_MAX_ENTRYS];
-	char* data;
+	//char* data;
 };
 
 
