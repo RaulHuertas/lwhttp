@@ -49,9 +49,23 @@ void lwHTTPConnection_startResponse(struct lwHTTPConnection* conn){
 	conn->txSize = conn->parsingUtils.responseHeaderLength+conn->parsingUtils.responseBodyLength;
 	conn->txSentBytes = 0;
 	conn->state = lwHTTPConnState_ANSWERING_REQUEST;
-	LWHTTPDebug("LWHTTPDebug> Header to send: %s", conn->parsingUtils.responseHeader);
-
+	LWHTTPDebug("LWHTTPDebug: Header to send: %s", conn->parsingUtils.responseHeader);
+	conn->flags &= (lwHTTPConn_DontCopyOnTrasmit);
 }
 
+void lwHTTPConnection_startStaticResourceResponse(
+	struct lwHTTPConnection* conn,
+	int index,
+	int justHeader
+){
+	//Juntar la cabecera con el BODY de la respuesta
+	struct lwhttpSite* site = conn->site;
+	conn->txBuffPointer= site->data+site->tuples[index].position;
+	conn->txSize = site->tuples[index].totalSize;
+	conn->txSentBytes = 0;
+	conn->state = lwHTTPConnState_ANSWERING_REQUEST;
+	LWHTTPDebug("LWHTTPDebug: Sending resource at index: %d, %d", index, justHeader);
+	conn->flags |= lwHTTPConn_DontCopyOnTrasmit;
+}
 
 

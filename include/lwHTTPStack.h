@@ -8,15 +8,16 @@
 #ifndef LWHTTPSTACK_H_
 #define LWHTTPSTACK_H_
 
+#include "lwHTTPConfig.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define LWHTTPLIB_PORT												80
-#define LWHTTPLIB_MAX_ATTRB_NAME_MAX_LEN 							512
-#define LWHTTPLIB_MAX_ATTRB_VALUE_MAX_LEN 							512
-#define LWHTTPLIB_MAX_ATTRB_STRING_MAX_LEN 							512
+#define LWHTTPLIB_MAX_ATTRB_NAME_MAX_LEN 							(LWHTTP_MAX_URL_SIZE+1)
+#define LWHTTPLIB_MAX_ATTRB_VALUE_MAX_LEN 							(LWHTTP_MAX_URL_SIZE+1)
+#define LWHTTPLIB_MAX_ATTRB_STRING_MAX_LEN 							(LWHTTP_MAX_URL_SIZE+1)
 #define LWHTTPLIB_MAX_ATTRBUTESN 									16
 #define LWHTTPLIB_RESPONSE_HEADER_LENGHT							512
 #define LWHTTPLIB_MAX_RESPONSE_BODY_LENGHT							1048576
@@ -51,7 +52,7 @@ struct lwHTTPQueryParsingUtils{
 	char lineBeingScaned[LWHTTPLIB_MAX_ATTRB_STRING_MAX_LEN];
 	lwHTTPU16 scanedPointer;
 	char requestMethod[16];
-	char requestTarget[256];
+	char requestTarget[LWHTTP_MAX_URL_SIZE];
 	char requestWSProtocol[256];
 	char scanFlags;//si el target es "/"
 	char HTTPVersion[64];

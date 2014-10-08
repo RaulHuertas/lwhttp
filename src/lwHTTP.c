@@ -17,7 +17,8 @@
 
 
 void lwHTTPConnection_Init(
-	struct lwHTTPConnection* conn
+	struct lwHTTPConnection* conn,
+	struct lwhttpSite* site
 ){
 
 	conn->listener = 0;
@@ -34,6 +35,7 @@ void lwHTTPConnection_Init(
 	conn->rxBufStart = 0;
 	conn->tpcb = 0;
 	conn->subAppCtxt = 0;
+	conn->site = site;
 }
 
 err_t lwHTTPDispatcher_AcceptCallback(void *arg, struct tcp_pcb *newpcb, err_t err)
@@ -54,7 +56,8 @@ err_t lwHTTPDispatcher_ReceiveCallback(void *arg, struct tcp_pcb *tpcb,
 
 void lwHTTPDispatcher_Init(
 		struct lwHTTPDispatcher* dispatcher,
-		int port
+		int port,
+		struct lwhttpSite* site
 ){
 	err_t err;
 	dispatcher->caps.clientValidator = 0;
@@ -71,6 +74,7 @@ void lwHTTPDispatcher_Init(
 	dispatcher->pcb = tcp_new();
 	dispatcher->port = port;
 	dispatcher->nextConnectionToTry = 0;
+	dispatcher->site = site;
 	/* bind to specified @port */
 	err = tcp_bind(dispatcher->pcb, IP_ADDR_ANY, port);
 	if (err != ERR_OK) {
@@ -123,7 +127,7 @@ int lwHTTPDispatcher_EvaluateAccept(
 	}
 	//Se puede aceptar la conexion
 	LWHTTPDebug("Se puede aceptar la conexion, slot %d \n\r", connToUse);
-	lwHTTPConnection_Init(&dispatcher->conns[connToUse]);
+	lwHTTPConnection_Init(&dispatcher->conns[connToUse], dispatcher->site);
 	dispatcher->conns[connToUse].state = lwHTTPConnState_WAITING_DATA;
 	dispatcher->conns[connToUse].connectionNumber = connToUse;
 	dispatcher->conns[connToUse].tpcb = args->newpcb;

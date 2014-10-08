@@ -30,6 +30,12 @@ void lwHTTPConnection_startResponse(
 	struct lwHTTPConnection* conn
 );
 
+void lwHTTPConnection_startStaticResourceResponse(
+	struct lwHTTPConnection* conn,
+	int index,
+	int justHeader
+);
+
 void lwHTTPConnection_execRequest(
 	struct lwHTTPConnection* conn
 );

@@ -35,6 +35,7 @@ struct lwHTTPClientValidator;
 #define lwHTTPConn_Flag_AfterTX_UpgradeToWS				0x00000002U
 #define lwHTTPConn_Flag_IsWS							0x80000000U
 #define lwHTTPConn_ClearWSTxEntry						0x40000000U
+#define lwHTTPConn_DontCopyOnTrasmit					0x20000000U
 
 struct lwHTTPConnection{
 	struct tcp_pcb *tpcb;
@@ -42,6 +43,7 @@ struct lwHTTPConnection{
 	lwHTTPU8 rxBuf[LWHTTP_CONN_RX_BUFFER_SIZE];
 	lwHTTPU16 rxBufStart, rxBufEnd;
 	lwHTTPU8 txBuffer[LWHTTP_CONN_TX_BUFFER_SIZE];
+	char* txBuffPointer;
 	lwHTTPU32 txSize, txSentBytes;
 	int connectionNumber;
 	struct lwHTTPAppCapabilities* caps;
@@ -61,6 +63,7 @@ struct lwHTTPConnection{
 	lwHTTPU32 flags;
 	lwHTTPTime timeoutStartMark;
 	void* subAppCtxt;
+	struct lwhttpSite* site;
 };
 
 struct lwHTTPAppCapabilities{
@@ -86,6 +89,7 @@ struct lwHTTPDispatcher{
 	struct lwHTTPConnection conns[LWHTTP_MAX_CONNS];
 	struct tcp_pcb *pcb;
 	int port;
+	struct lwhttpSite* site;
 };
 
 struct lwHTTPClientValidator{
@@ -106,7 +110,8 @@ struct lwHTTPConn_AppHandler{
 
 void lwHTTPDispatcher_Init(
 		struct lwHTTPDispatcher* dispatcher,
-		int port
+		int port,
+		struct lwhttpSite* site
 );
 
 int lwHTTPDispatcher_EvaluateAccept(
@@ -115,7 +120,8 @@ int lwHTTPDispatcher_EvaluateAccept(
 );
 
 void lwHTTPConnection_Init(
-	struct lwHTTPConnection* conn
+	struct lwHTTPConnection* conn,
+	struct lwhttpSite* site
 );
 
 void lwHTTPDispatcher_Evaluate(

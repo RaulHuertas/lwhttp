@@ -11,7 +11,18 @@ void lwHTTPSite_Init(struct lwhttpSite* site){
 	site->data = 0;
 }
 
+int isHashInPack(lwHTTPU32 hash, struct lwhttpSite* site){
+	int ret = -1;
+	int t;
+	for(t=0;t<site->tupplesN;t++){
+		if( site->tuples[t].urlHash == hash ){
+			ret = t;
+			break;
+		}
+	}
+	return ret;
 
+}
 
 
 

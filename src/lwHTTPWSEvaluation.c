@@ -21,6 +21,7 @@ unsigned char encoded64String[64];
 
 
 void lwHTTP_InitWebSocket(struct lwHTTPConnection* conn, int protocol){
+	conn->txBuffPointer = (char*)(&conn->txBuffer[0]);
 	LWHTTPDebug("inicialziando web sockets\n");
 	struct lwHTTPAppCapabilities* caps = conn->caps;
 	int j=0;

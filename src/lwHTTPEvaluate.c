@@ -104,18 +104,23 @@ void lwHTTPDispatcher_EvaluateConn(
 		case lwHTTPConnState_ANSWERING_REQUEST:{
 			//LWHTTPDebug("LWHTTPDebug: params recevd %x %x", conn, conn->tpcb );
 			LWHTTPDebug("LWHTTPDebug: sent bytes %d\n", conn->txSentBytes);
-			lwHTTPU16 bytesToWriteNow = (conn->txSize-conn->txSentBytes);
+			lwHTTPU32 bytesToWriteNow = (conn->txSize-conn->txSentBytes);
 			if(bytesToWriteNow>LWHTTP_MAX_WRITE_SIZE){
 				bytesToWriteNow = LWHTTP_MAX_WRITE_SIZE;
 			}
 			LWHTTPDebug("LWHTTPDebug: transmitiendo %d bytes \n", bytesToWriteNow);
+			u8_t copyFlags;
+			if( conn->flags &lwHTTPConn_DontCopyOnTrasmit ){
+				copyFlags = 0;
+			}else{
+				copyFlags = TCP_WRITE_FLAG_COPY;
+			}
 			err_t result = tcp_write(
 				conn->tpcb,
-				&conn->txBuffer[conn->txSentBytes],
+				&conn->txBuffPointer[conn->txSentBytes],
 				bytesToWriteNow,
-				TCP_WRITE_FLAG_COPY
+				copyFlags
 			);
-
 			LWHTTPDebug("LWHTTPDebug: Orden de escritura enviada\n");
 			switch(result){
 				case ERR_OK:{
@@ -163,6 +168,8 @@ void lwHTTPDispatcher_EvaluateConn(
 					//No hace nada, cuando se regrese a evaluar
 					//el estado de esta conexion
 					//se podran enviar mas datos
+					LWHTTPDebug("LWHTTPDebug: ERR_MEM conn %d Error %x transmitiendo datos\n", conn->connectionNumber, result);
+					lwHTTPConnection_Close(conn);
 					break;
 				}
 				default:{
