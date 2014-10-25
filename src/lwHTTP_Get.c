@@ -103,8 +103,14 @@ responder://Buscar si es un archivo en el sistema de archivos
 	return;//responder
 
 recursoNoEncontrado:
-	LWHTTPDebug("Archivo no encontrado, respondiendo NOT FOUND...\n");
-	lwHTTPConnection_startStaticResourceResponse(conn, conn->site->exportErrorFileIndex, 0);
+	LWHTTPDebug("LWHTTPDebug: Archivo no encontrado, respondiendo NOT FOUND...\n");
+	if(conn->site->exportErrorFileIndex<(conn->site->tupplesN-1)){//Existe página de error
+		lwHTTPConnection_startStaticResourceResponse(conn, conn->site->exportErrorFileIndex, 0);
+	}else{//Cerrar la conexión
+		LWHTTPDebug("LWHTTPDebug: Cerrando conexion\n");
+		lwHTTPConnection_Close(conn);
+	}
+
 	//conn->flags |= lwHTTPConn_Flag_CloseAfterTransmission;
 	return;//recursoNoEncontrado
 

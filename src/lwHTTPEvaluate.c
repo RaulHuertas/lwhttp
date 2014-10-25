@@ -109,9 +109,9 @@ void lwHTTPDispatcher_EvaluateConn(
 				bytesToWriteNow = LWHTTP_MAX_WRITE_SIZE;
 			}
 			LWHTTPDebug("LWHTTPDebug: transmitiendo %d bytes \n", bytesToWriteNow);
-			u8_t copyFlags;
+			u8_t copyFlags = 0;
 			if( conn->flags &lwHTTPConn_DontCopyOnTrasmit ){
-				copyFlags = 0;
+
 			}else{
 				copyFlags = TCP_WRITE_FLAG_COPY;
 			}
@@ -121,6 +121,7 @@ void lwHTTPDispatcher_EvaluateConn(
 				bytesToWriteNow,
 				copyFlags
 			);
+			tcp_output(conn->tpcb);
 			LWHTTPDebug("LWHTTPDebug: Orden de escritura enviada\n");
 			switch(result){
 				case ERR_OK:{
@@ -202,9 +203,9 @@ void lwHTTPDispatcher_Evaluate(
 			continue;
 		}
 		lwHTTPDispatcher_EvaluateConn(conn);
-		if(conn->state!=lwHTTPConnState_CLOSED){
-			tcp_output(conn->tpcb);
-		}
+//		if(conn->state!=lwHTTPConnState_CLOSED){
+//			tcp_output(conn->tpcb);
+//		}
 
 	}
 
